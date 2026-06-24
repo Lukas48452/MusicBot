@@ -1,25 +1,31 @@
-# Build stage
+# ---- Build stage ----
 FROM maven:3.9-eclipse-temurin-17 AS build
 
-WORKDIR /app
+WORKDIR /build
 
-# Cache dependencies first
+# copy only dependency files first (better caching)
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+RUN mvn -B dependency:go-offline
 
-# Build source
+# copy source
 COPY src ./src
+
+# build jar
 RUN mvn clean package -DskipTests
 
-# Runtime stage
+# ---- Runtime stage ----
 FROM eclipse-temurin:17-jre
 
 WORKDIR /app
 
-# Copy jar from build stage
-COPY --from=build /app/target/*.jar app.jar
+# copy built jar (name may vary depending on repo config)
+COPY --from=build /build/target/*.jar app.jar
 
-# Optional: JVM tuning for bots
-ENV JAVA_OPTS="-Xms256m -Xmx512m"
+# config directory
+RUN mkdir -p /app/config
 
-ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
+VOLUME ["/app/config"]
+
+ENV JAVA_TOOL_OPTIONS="-Xms128m -Xmx512m"
+
+ENTRYPOINT ["java", "-jar", "app.jar", "--nogui"]
