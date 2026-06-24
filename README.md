@@ -5,11 +5,11 @@
 
 # JMusicBot
 
-[![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/jagrosh/MusicBot/blob/master/LICENSE)
-[![Java](https://img.shields.io/badge/Java-26-%23ED8B00?logo=openjdk)](https://adoptium.net/temurin/releases/)
-[![Gradle](https://img.shields.io/badge/Gradle-9.5-%2302303A?logo=gradle)](https://gradle.org)
-[![Build](https://img.shields.io/github/actions/workflow/status/jagrosh/MusicBot/build-and-test.yml?logo=github)](https://github.com/jagrosh/MusicBot/actions/workflows/build-and-test.yml)
-[![Docker](https://img.shields.io/badge/Docker-Compose-%232496ED?logo=docker)](https://docs.docker.com/compose/)
+[![License](https://shieldcn.dev/github/license/jagrosh/MusicBot.svg)](https://github.com/jagrosh/MusicBot/blob/master/LICENSE)
+[![Java](https://shieldcn.dev/badge/Java-26-orange)](https://adoptium.net/temurin/releases/)
+[![Gradle](https://shieldcn.dev/badge/Gradle-9.5-purple)](https://gradle.org)
+[![Build](https://shieldcn.dev/github/actions/workflow/status/jagrosh/MusicBot/build-and-test.yml)](https://github.com/jagrosh/MusicBot/actions/workflows/build-and-test.yml)
+[![Docker](https://shieldcn.dev/badge/Docker-Compose-blue)](https://docs.docker.com/compose/)
 
 A cross-platform Discord music bot with a clean interface, easy to set up and run yourself.
 
