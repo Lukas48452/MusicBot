@@ -14,7 +14,7 @@ java {
 repositories {
     mavenCentral()
     maven("https://m2.dv8tion.net/releases")
-    maven("https://jcenter.bintray.com")
+    maven("https://m2.chew.pro/releases")
     maven("https://jitpack.io")
     maven("https://m2.duncte123.dev/releases")
     maven("https://maven.lavalink.dev/releases")
@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     implementation("net.dv8tion:JDA:4.4.1_353")
-    implementation("com.jagrosh:jda-utilities:3.0.5")
+    implementation("pw.chew:jda-chewtils:1.24.1")
     implementation("dev.arbjerg:lavaplayer:2.2.1")
     implementation("dev.lavalink.youtube:common:1.5.2")
     implementation("com.github.jagrosh:JLyrics:master-SNAPSHOT")
