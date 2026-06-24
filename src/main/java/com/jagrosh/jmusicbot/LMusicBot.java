@@ -304,6 +304,7 @@ public class LMusicBot
             slashCommands.add(new RepeatSlashCmd(bot));
             slashCommands.add(new ForceskipSlashCmd(bot));
             slashCommands.add(new PlaynextSlashCmd(bot));
+            slashCommands.add(new LmbSlashCmd(bot));
             cb.addSlashCommands(slashCommands.toArray(new SlashCommand[0]));
         }
         
