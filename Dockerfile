@@ -1,6 +1,6 @@
 ARG JAVA_VERSION=26
 
-FROM gradle:8.12-jdk${JAVA_VERSION} AS build
+FROM gradle:9-jdk${JAVA_VERSION} AS build
 WORKDIR /build
 
 COPY build.gradle.kts settings.gradle.kts ./
