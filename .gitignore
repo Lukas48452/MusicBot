@@ -8,6 +8,10 @@ nb*.xml
 .idea/
 *.iml
 .vscode/
+.classpath
+.project
+.settings/
+bin/
 
 # OS
 .DS_Store
