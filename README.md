@@ -78,18 +78,47 @@ make test       # run tests via Gradle
 > **Requirements**: JDK 26+, Gradle 9.5+ (or use the provided Gradle wrapper)
 
 ## Spotify Setup (Optional)
+
 The bot can play Spotify tracks, playlists, and albums by resolving them via the Spotify Web API and loading the audio from YouTube.
 
-1. Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard) and create an app
-2. Copy the **Client ID** and **Client Secret**
-3. Add them to your `config.yaml`:
-   ```
-   spotify {
-       clientid = "your-client-id"
-       clientsecret = "your-client-secret"
-   }
-   ```
-4. Paste any Spotify track, playlist, or album URL into Discord and the bot will play it
+### Step-by-Step
+
+1. **Create a Spotify App**
+   - Go to the [Spotify Developer Dashboard](https://developer.spotify.com/dashboard)
+   - Log in with your Spotify account (or create one if needed)
+   - Click **Create App**
+   - Enter any **App name** and **App description**
+   - Set the **Redirect URI** to `http://localhost:8888/callback` (not actually used, but required by Spotify)
+   - Agree to the terms and click **Create**
+
+2. **Get your credentials**
+   - In your new app's dashboard, click **Settings** in the top-right
+   - Under **Basic Information**, you'll see:
+     - **Client ID** — a long string of letters and numbers
+     - **Client Secret** — click **View** to reveal it
+   - Copy both values
+
+3. **Configure the bot**
+   - Copy `config.example.yaml` to `config.yaml` (or edit your existing config)
+   - Add your Spotify credentials:
+     ```yaml
+     spotify {
+         clientid = "your-client-id"
+         clientsecret = "your-client-secret"
+     }
+     ```
+   - Replace the quoted strings with the values you copied
+
+4. **Restart the bot**
+   - If using Docker: `make restart`
+   - If running manually: stop and restart the JAR
+
+5. **Use it**
+   - Paste any Spotify URL into a Discord channel where the bot can see it:
+     - `https://open.spotify.com/track/...` — single track
+     - `https://open.spotify.com/playlist/...` — full playlist
+     - `https://open.spotify.com/album/...` — full album
+   - The bot will search YouTube for each track and play the best match
 
 ## Questions/Suggestions/Bug Reports
 **Please read the [Issues List](https://github.com/jagrosh/MusicBot/issues) before suggesting a feature**. If you have a question, need troubleshooting help, or want to brainstorm a new feature, please start a [Discussion](https://github.com/jagrosh/MusicBot/discussions). If you'd like to suggest a feature or report a reproducible bug, please open an [Issue](https://github.com/jagrosh/MusicBot/issues) on this repository. If you like this bot, be sure to add a star to the libraries that make this possible: [**JDA**](https://github.com/DV8FromTheWorld/JDA) and [**lavaplayer**](https://github.com/sedmelluq/lavaplayer)!
