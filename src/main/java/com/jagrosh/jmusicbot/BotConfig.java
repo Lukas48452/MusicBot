@@ -49,6 +49,7 @@ public class BotConfig
     private OnlineStatus status;
     private Activity game;
     private Config aliases, transforms;
+    private String spotifyClientId, spotifyClientSecret;
 
     private boolean valid = false;
     
@@ -64,12 +65,21 @@ public class BotConfig
         // read config from file
         try 
         {
-            // get the path to the config, default config.txt
+            // get the path to the config, default config.yaml
             path = getConfigPath();
-            
-            // load in the config file, plus the default values
-            //Config config = ConfigFactory.parseFile(path.toFile()).withFallback(ConfigFactory.load());
-            Config config = ConfigFactory.load();
+
+            // load in the config file (parsed as HOCON), plus the default reference values
+            Config config;
+            if (path.toFile().exists())
+            {
+                config = ConfigFactory.parseFile(path.toFile(),
+                    ConfigParseOptions.defaults().setSyntax(ConfigSyntax.CONF))
+                    .withFallback(ConfigFactory.load());
+            }
+            else
+            {
+                config = ConfigFactory.load();
+            }
             
             // set values
             token = config.getString("token");
@@ -98,6 +108,8 @@ public class BotConfig
             aliases = config.getConfig("aliases");
             transforms = config.getConfig("transforms");
             skipratio = config.getDouble("skipratio");
+            spotifyClientId = config.getString("spotify.clientid");
+            spotifyClientSecret = config.getString("spotify.clientsecret");
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file
@@ -170,7 +182,7 @@ public class BotConfig
         }
         catch(IOException ex) 
         {
-            prompt.alert(Prompt.Level.WARNING, CONTEXT, "Failed to write new config options to config.txt: "+ex
+            prompt.alert(Prompt.Level.WARNING, CONTEXT, "Failed to write new config options to config.yaml: "+ex
                 + "\nPlease make sure that the files are not on your desktop or some other restricted area.\n\nConfig Location: " 
                 + path.toAbsolutePath().toString());
         }
@@ -186,7 +198,7 @@ public class BotConfig
     
     private static Path getConfigPath()
     {
-        Path path = OtherUtil.getPath(System.getProperty("config.file", System.getProperty("config", "config.txt")));
+        Path path = OtherUtil.getPath(System.getProperty("config.file", System.getProperty("config", "config.yaml")));
         if(path.toFile().exists())
         {
             if(System.getProperty("config.file") == null)
@@ -380,5 +392,15 @@ public class BotConfig
     public Config getTransforms()
     {
         return transforms;
+    }
+
+    public String getSpotifyClientId()
+    {
+        return spotifyClientId;
+    }
+
+    public String getSpotifyClientSecret()
+    {
+        return spotifyClientSecret;
     }
 }

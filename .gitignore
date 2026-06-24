@@ -16,6 +16,8 @@ Thumbs.db
 # Project-specific
 /config/
 /Playlists/
+config.yaml
+config.txt
 
 # Logs
 *.log

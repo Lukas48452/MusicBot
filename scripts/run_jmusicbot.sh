@@ -1,35 +1,21 @@
 #!/bin/sh
 
-# This will have this script check for a new version of JMusicBot every
-# startup (and download it if the latest version isn't currently downloaded)
-DOWNLOAD=true
+# Run JMusicBot via Docker Compose
+# The bot restarts automatically unless stopped explicitly
 
-# This will cause the script to run in a loop so that the bot auto-restarts
-# when you use the shutdown command
-LOOP=true
+COMPOSE_FILE="${1:-compose.yaml}"
 
-download() {
-    if [ $DOWNLOAD = true ]; then
-        URL=$(curl -s https://api.github.com/repos/jagrosh/MusicBot/releases/latest \
-           | grep -i "browser_download_url.*\.jar" \
-           | sed 's/.*\(http.*\)"/\1/')
-        FILENAME=$(echo $URL | sed 's/.*\/\([^\/]*\)/\1/')
-        if [ -f $FILENAME ]; then
-            echo "Latest version already downloaded (${FILENAME})"
-        else
-            curl -L $URL -o $FILENAME
-        fi
-    fi
-}
+while true; do
+    echo "Starting JMusicBot via Docker Compose (${COMPOSE_FILE})..."
+    docker compose -f "${COMPOSE_FILE}" up --build -d
 
-run() {
-    java -Dnogui=true -jar $(ls -t JMusicBot* | head -1)
-}
+    echo "JMusicBot is running. Attach logs with: docker compose logs -f"
+    echo "Stop the bot with: docker compose down"
+    echo "Press Ctrl+C to exit this launcher (bot keeps running)."
 
-while
-    download
-    run
-    $LOOP
-do
-    continue
+    # Wait indefinitely; if the container stops unexpectedly, restart it
+    docker wait "$(docker compose -f "${COMPOSE_FILE}" ps -q jmusicbot 2>/dev/null)" 2>/dev/null
+
+    echo "Container stopped. Restarting in 5 seconds..."
+    sleep 5
 done 

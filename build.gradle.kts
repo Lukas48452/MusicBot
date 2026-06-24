@@ -26,6 +26,7 @@ dependencies {
     implementation("dev.arbjerg:lavaplayer:2.2.1")
     implementation("dev.lavalink.youtube:common:1.5.2")
     implementation("com.github.jagrosh:JLyrics:master-SNAPSHOT")
+    implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.dunctebot:sourcemanagers:1.9.0")
     implementation("ch.qos.logback:logback-classic:1.2.13")
     implementation("com.typesafe:config:1.3.2")
