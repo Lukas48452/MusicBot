@@ -1,31 +1,33 @@
-# ---- Build stage ----
-FROM maven:3.9-eclipse-temurin-17 AS build
+ARG JAVA_VERSION=26
 
+FROM gradle:8.12-jdk${JAVA_VERSION} AS build
 WORKDIR /build
 
-# copy only dependency files first (better caching)
-COPY pom.xml .
-RUN mvn -B dependency:go-offline
+COPY build.gradle.kts settings.gradle.kts ./
+RUN gradle --no-daemon dependencies
 
-# copy source
 COPY src ./src
+RUN gradle --no-daemon shadowJar
 
-# build jar
-RUN mvn clean package -DskipTests
-
-# ---- Runtime stage ----
-FROM eclipse-temurin:17-jre
-
+FROM eclipse-temurin:${JAVA_VERSION}-jre
 WORKDIR /app
 
-# copy built jar (name may vary depending on repo config)
-COPY --from=build /build/target/*.jar app.jar
+RUN groupadd -r jmusicbot && \
+    useradd -r -g jmusicbot -d /app -s /sbin/nologin jmusicbot && \
+    mkdir -p /app/config && \
+    chown -R jmusicbot:jmusicbot /app
 
-# config directory
-RUN mkdir -p /app/config
+COPY --from=build --chown=jmusicbot:jmusicbot /build/build/libs/*-All.jar app.jar
 
 VOLUME ["/app/config"]
+USER jmusicbot
 
-ENV JAVA_TOOL_OPTIONS="-Xms128m -Xmx512m"
+ENV JAVA_TOOL_OPTIONS="-Xms128m -Xmx512m -XX:+ExitOnOutOfMemoryError -Djava.awt.headless=true"
+
+STOPSIGNAL SIGTERM
 
 ENTRYPOINT ["java", "-jar", "app.jar", "--nogui"]
+
+LABEL org.opencontainers.image.title="JMusicBot" \
+      org.opencontainers.image.description="A Discord music bot" \
+      org.opencontainers.image.source="https://github.com/jagrosh/MusicBot"
