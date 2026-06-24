@@ -1,29 +1,12 @@
 services:
-  bot:
+  jmusicbot:
     build: .
-    container_name: discord-music-bot
+    container_name: jmusicbot
 
     restart: unless-stopped
 
-    environment:
-      DISCORD_TOKEN: "your-bot-token-here"
-      PREFIX: "!"
-      LAVALINK_HOST: "lavalink"
-      LAVALINK_PORT: "2333"
-      LAVALINK_PASSWORD: "youshallnotpass"
-
-    depends_on:
-      - lavalink
-
-  lavalink:
-    image: fredboat/lavalink:latest
-    container_name: lavalink
-
-    restart: unless-stopped
+    volumes:
+      - ./config:/app/config
 
     environment:
-      SERVER_PORT: 2333
-      LAVALINK_SERVER_PASSWORD: "youshallnotpass"
-
-    ports:
-      - "2333:2333"
+      JAVA_TOOL_OPTIONS: "-Xms128m -Xmx512m"
