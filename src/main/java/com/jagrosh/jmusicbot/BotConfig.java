@@ -49,7 +49,7 @@ public class BotConfig
     private OnlineStatus status;
     private Activity game;
     private Config aliases, transforms;
-    private String spotifyClientId, spotifyClientSecret;
+    private String spotifyClientId, spotifyClientSecret, interactionMode;
 
     private boolean valid = false;
     
@@ -110,6 +110,7 @@ public class BotConfig
             skipratio = config.getDouble("skipratio");
             spotifyClientId = config.getString("spotify.clientid");
             spotifyClientSecret = config.getString("spotify.clientsecret");
+            interactionMode = config.getString("interactionmode");
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file
@@ -402,5 +403,10 @@ public class BotConfig
     public String getSpotifyClientSecret()
     {
         return spotifyClientSecret;
+    }
+
+    public String getInteractionMode()
+    {
+        return interactionMode;
     }
 }

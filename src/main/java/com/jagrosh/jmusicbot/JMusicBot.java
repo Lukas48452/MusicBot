@@ -17,6 +17,7 @@ package com.jagrosh.jmusicbot;
 
 import com.jagrosh.jdautilities.command.CommandClient;
 import com.jagrosh.jdautilities.command.CommandClientBuilder;
+import com.jagrosh.jdautilities.command.SlashCommand;
 import com.jagrosh.jdautilities.commons.waiter.EventWaiter;
 import com.jagrosh.jdautilities.examples.command.*;
 import com.jagrosh.jmusicbot.commands.admin.*;
@@ -24,12 +25,15 @@ import com.jagrosh.jmusicbot.commands.dj.*;
 import com.jagrosh.jmusicbot.commands.general.*;
 import com.jagrosh.jmusicbot.commands.music.*;
 import com.jagrosh.jmusicbot.commands.owner.*;
+import com.jagrosh.jmusicbot.commands.slash.*;
 import com.jagrosh.jmusicbot.entities.Prompt;
 import com.jagrosh.jmusicbot.gui.GUI;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.awt.Color;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import javax.security.auth.login.LoginException;
 import net.dv8tion.jda.api.*;
 import net.dv8tion.jda.api.entities.Activity;
@@ -178,7 +182,7 @@ public class JMusicBot
         aboutCommand.setIsAuthor(false);
         aboutCommand.setReplacementCharacter("\uD83C\uDFB6"); // 🎶
         
-        // set up the command client
+        // build the command client
         CommandClientBuilder cb = new CommandClientBuilder()
                 .setPrefix(config.getPrefix())
                 .setAlternativePrefix(config.getAltPrefix())
@@ -186,52 +190,80 @@ public class JMusicBot
                 .setEmojis(config.getSuccess(), config.getWarning(), config.getError())
                 .setHelpWord(config.getHelp())
                 .setLinkedCacheSize(200)
-                .setGuildSettingsManager(settings)
-                .addCommands(aboutCommand,
-                        new PingCommand(),
-                        new SettingsCmd(bot),
-                        
-                        new LyricsCmd(bot),
-                        new NowplayingCmd(bot),
-                        new PlayCmd(bot),
-                        new PlaylistsCmd(bot),
-                        new QueueCmd(bot),
-                        new RemoveCmd(bot),
-                        new SearchCmd(bot),
-                        new SCSearchCmd(bot),
-                        new SeekCmd(bot),
-                        new ShuffleCmd(bot),
-                        new SkipCmd(bot),
+                .setGuildSettingsManager(settings);
 
-                        new ForceRemoveCmd(bot),
-                        new ForceskipCmd(bot),
-                        new MoveTrackCmd(bot),
-                        new PauseCmd(bot),
-                        new PlaynextCmd(bot),
-                        new RepeatCmd(bot),
-                        new SkiptoCmd(bot),
-                        new StopCmd(bot),
-                        new VolumeCmd(bot),
-                        
-                        new PrefixCmd(bot),
-                        new QueueTypeCmd(bot),
-                        new SetdjCmd(bot),
-                        new SkipratioCmd(bot),
-                        new SettcCmd(bot),
-                        new SetvcCmd(bot),
+        String interactionMode = config.getInteractionMode();
+        boolean useText = interactionMode.equalsIgnoreCase("all") || interactionMode.equalsIgnoreCase("text");
+        boolean useSlash = interactionMode.equalsIgnoreCase("all") || interactionMode.equalsIgnoreCase("slash");
 
-                        new AutoplaylistCmd(bot),
-                        new DebugCmd(bot),
-                        new PlaylistCmd(bot),
-                        new SetavatarCmd(bot),
-                        new SetgameCmd(bot),
-                        new SetnameCmd(bot),
-                        new SetstatusCmd(bot),
-                        new ShutdownCmd(bot)
-                );
+        if (useText)
+        {
+            cb.addCommands(aboutCommand,
+                    new PingCommand(),
+                    new SettingsCmd(bot),
+
+                    new LyricsCmd(bot),
+                    new NowplayingCmd(bot),
+                    new PlayCmd(bot),
+                    new PlaylistsCmd(bot),
+                    new QueueCmd(bot),
+                    new RemoveCmd(bot),
+                    new SearchCmd(bot),
+                    new SCSearchCmd(bot),
+                    new SeekCmd(bot),
+                    new ShuffleCmd(bot),
+                    new SkipCmd(bot),
+
+                    new ForceRemoveCmd(bot),
+                    new ForceskipCmd(bot),
+                    new MoveTrackCmd(bot),
+                    new PauseCmd(bot),
+                    new PlaynextCmd(bot),
+                    new RepeatCmd(bot),
+                    new SkiptoCmd(bot),
+                    new StopCmd(bot),
+                    new VolumeCmd(bot),
+
+                    new PrefixCmd(bot),
+                    new QueueTypeCmd(bot),
+                    new SetdjCmd(bot),
+                    new SkipratioCmd(bot),
+                    new SettcCmd(bot),
+                    new SetvcCmd(bot),
+
+                    new AutoplaylistCmd(bot),
+                    new DebugCmd(bot),
+                    new PlaylistCmd(bot),
+                    new SetavatarCmd(bot),
+                    new SetgameCmd(bot),
+                    new SetnameCmd(bot),
+                    new SetstatusCmd(bot),
+                    new ShutdownCmd(bot)
+            );
+        }
+
+        if (useSlash)
+        {
+            List<SlashCommand> slashCommands = new ArrayList<>();
+            slashCommands.add(new PlaySlashCmd(bot));
+            slashCommands.add(new SkipSlashCmd(bot));
+            slashCommands.add(new NowplayingSlashCmd(bot));
+            slashCommands.add(new QueueSlashCmd(bot));
+            slashCommands.add(new SearchSlashCmd(bot));
+            slashCommands.add(new ShuffleSlashCmd(bot));
+            slashCommands.add(new LyricsSlashCmd(bot));
+            slashCommands.add(new RemoveSlashCmd(bot));
+            slashCommands.add(new StopSlashCmd(bot));
+            slashCommands.add(new PauseSlashCmd(bot));
+            slashCommands.add(new VolumeSlashCmd(bot));
+            slashCommands.add(new RepeatSlashCmd(bot));
+            slashCommands.add(new ForceskipSlashCmd(bot));
+            slashCommands.add(new PlaynextSlashCmd(bot));
+            cb.addSlashCommands(slashCommands.toArray(new SlashCommand[0]));
+        }
         
         // enable eval if applicable
-        if(config.useEval())
+        if(config.useEval() && useText)
             cb.addCommand(new EvalCmd(bot));
         
         // set status if set in config
