@@ -88,7 +88,7 @@ The bot can play Spotify tracks, playlists, and albums by resolving them via the
    - Log in with your Spotify account (or create one if needed)
    - Click **Create App**
    - Enter any **App name** and **App description**
-   - Set the **Redirect URI** to `http://localhost:8888` (not actually used, but required by Spotify)
+   - Set the **Redirect URI** to `https://example.com/callback` (not actually used by the bot, but required by Spotify)
    - Agree to the terms and click **Create**
 
 2. **Get your credentials**
