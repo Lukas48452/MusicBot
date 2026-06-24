@@ -1,16 +1,16 @@
-// Config for the JMusicBot
+// Config for the LMusicBot
 // Any line starting with // is ignored
 // You MUST set the token and owner
 // All other items have defaults if you don't set them
 
 
 // Bot token (required)
-// https://github.com/jagrosh/MusicBot/wiki/Getting-a-Bot-Token
+// https://github.com/Lukas48452/MusicBot/wiki/Getting-a-Bot-Token
 token = BOT_TOKEN_HERE
 
 
 // Owner user ID (required, 17-18 digit number)
-// https://github.com/jagrosh/MusicBot/wiki/Finding-Your-User-ID
+// https://github.com/Lukas48452/MusicBot/wiki/Finding-Your-User-ID
 owner = 0
 
 

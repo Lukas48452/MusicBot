@@ -35,12 +35,12 @@ jobs:
       - name: Build with Gradle
         run: ./gradlew shadowJar
       - name: Rename jar
-        run: mv build/libs/*-All.jar JMusicBot-${{ github.event.inputs.version_number }}.jar
+        run: mv build/libs/*-All.jar LMusicBot-${{ github.event.inputs.version_number }}.jar
       - name: Upload jar
         uses: actions/upload-artifact@v4
         with:
           name: jar
-          path: JMusicBot-${{ github.event.inputs.version_number }}.jar
+          path: LMusicBot-${{ github.event.inputs.version_number }}.jar
           if-no-files-found: error
   create_release:
     name: Create Release
@@ -68,9 +68,9 @@ jobs:
 
             ---
             ### Setup
-            https://jmusicbot.com/setup
-            https://jmusicbot.com/config
-            # Download: [JMusicBot-${{ github.event.inputs.version_number }}.jar](https://github.com/jagrosh/MusicBot/releases/download/${{ github.event.inputs.version_number }}/JMusicBot-${{ github.event.inputs.version_number }}.jar)
+            https://github.com/Lukas48452/MusicBot/wiki/Setup
+            https://github.com/Lukas48452/MusicBot/wiki/Config
+            # Download: [LMusicBot-${{ github.event.inputs.version_number }}.jar](https://github.com/Lukas48452/MusicBot/releases/download/${{ github.event.inputs.version_number }}/LMusicBot-${{ github.event.inputs.version_number }}.jar)
   build_docker:
     name: Build and Push Docker Image
     runs-on: ubuntu-latest

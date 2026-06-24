@@ -1,9 +1,9 @@
 services:
-  jmusicbot:
+  lmusicbot:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: jmusicbot
+    container_name: lmusicbot
     restart: unless-stopped
     init: true
 

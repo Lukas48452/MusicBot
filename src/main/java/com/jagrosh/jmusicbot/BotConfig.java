@@ -49,7 +49,10 @@ public class BotConfig
     private OnlineStatus status;
     private Activity game;
     private Config aliases, transforms;
-    private String spotifyClientId, spotifyClientSecret, interactionMode;
+    private String spotifyClientId, spotifyClientSecret, interactionMode,
+            webhookUrl, storageType, redisHost, redisPassword,
+            postgresHost, postgresDatabase, postgresUser, postgresPassword;
+    private int webhookUpdateTime, redisPort, postgresPort;
 
     private boolean valid = false;
     
@@ -111,6 +114,17 @@ public class BotConfig
             spotifyClientId = config.getString("spotify.clientid");
             spotifyClientSecret = config.getString("spotify.clientsecret");
             interactionMode = config.getString("interactionmode");
+            webhookUrl = config.getString("webhook.url");
+            webhookUpdateTime = config.getInt("webhook.updatetime");
+            storageType = config.getString("storage.type");
+            redisHost = config.getString("storage.redis.host");
+            redisPort = config.getInt("storage.redis.port");
+            redisPassword = config.getString("storage.redis.password");
+            postgresHost = config.getString("storage.postgres.host");
+            postgresPort = config.getInt("storage.postgres.port");
+            postgresDatabase = config.getString("storage.postgres.database");
+            postgresUser = config.getString("storage.postgres.user");
+            postgresPassword = config.getString("storage.postgres.password");
             dbots = owner == 113156185389092864L;
             
             // we may need to write a new config file
@@ -121,7 +135,7 @@ public class BotConfig
             {
                 token = prompt.prompt("Please provide a bot token."
                         + "\nInstructions for obtaining a token can be found here:"
-                        + "\nhttps://github.com/jagrosh/MusicBot/wiki/Getting-a-Bot-Token."
+                        + "\nhttps://github.com/Lukas48452/MusicBot/wiki/Getting-a-Bot-Token."
                         + "\nBot Token: ");
                 if(token==null)
                 {
@@ -142,7 +156,7 @@ public class BotConfig
                     owner = Long.parseLong(prompt.prompt("Owner ID was missing, or the provided owner ID is not valid."
                         + "\nPlease provide the User ID of the bot's owner."
                         + "\nInstructions for obtaining your User ID can be found here:"
-                        + "\nhttps://github.com/jagrosh/MusicBot/wiki/Finding-Your-User-ID"
+                        + "\nhttps://github.com/Lukas48452/MusicBot/wiki/Finding-Your-User-ID"
                         + "\nOwner User ID: "));
                 }
                 catch(NumberFormatException | NullPointerException ex)
@@ -191,7 +205,7 @@ public class BotConfig
     
     private static String loadDefaultConfig()
     {
-        String original = OtherUtil.loadResource(new JMusicBot(), "/reference.conf");
+        String original = OtherUtil.loadResource(new LMusicBot(), "/reference.conf");
         return original==null 
                 ? "token = BOT_TOKEN_HERE\r\nowner = 0 // OWNER ID" 
                 : original.substring(original.indexOf(START_TOKEN)+START_TOKEN.length(), original.indexOf(END_TOKEN)).trim();
@@ -212,17 +226,17 @@ public class BotConfig
     public static void writeDefaultConfig()
     {
         Prompt prompt = new Prompt(null, null, true, true);
-        prompt.alert(Prompt.Level.INFO, "JMusicBot Config", "Generating default config file");
+        prompt.alert(Prompt.Level.INFO, "LMusicBot Config", "Generating default config file");
         Path path = BotConfig.getConfigPath();
         byte[] bytes = BotConfig.loadDefaultConfig().getBytes();
         try
         {
-            prompt.alert(Prompt.Level.INFO, "JMusicBot Config", "Writing default config file to " + path.toAbsolutePath().toString());
+            prompt.alert(Prompt.Level.INFO, "LMusicBot Config", "Writing default config file to " + path.toAbsolutePath().toString());
             Files.write(path, bytes);
         }
         catch(Exception ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot Config", "An error occurred writing the default config file: " + ex.getMessage());
+            prompt.alert(Prompt.Level.ERROR, "LMusicBot Config", "An error occurred writing the default config file: " + ex.getMessage());
         }
     }
     
@@ -408,5 +422,60 @@ public class BotConfig
     public String getInteractionMode()
     {
         return interactionMode;
+    }
+
+    public String getWebhookUrl()
+    {
+        return webhookUrl;
+    }
+
+    public int getWebhookUpdateTime()
+    {
+        return webhookUpdateTime;
+    }
+
+    public String getStorageType()
+    {
+        return storageType;
+    }
+
+    public String getRedisHost()
+    {
+        return redisHost;
+    }
+
+    public int getRedisPort()
+    {
+        return redisPort;
+    }
+
+    public String getRedisPassword()
+    {
+        return redisPassword;
+    }
+
+    public String getPostgresHost()
+    {
+        return postgresHost;
+    }
+
+    public int getPostgresPort()
+    {
+        return postgresPort;
+    }
+
+    public String getPostgresDatabase()
+    {
+        return postgresDatabase;
+    }
+
+    public String getPostgresUser()
+    {
+        return postgresUser;
+    }
+
+    public String getPostgresPassword()
+    {
+        return postgresPassword;
     }
 }

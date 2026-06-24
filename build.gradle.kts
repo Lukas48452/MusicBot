@@ -3,7 +3,7 @@ plugins {
     id("com.gradleup.shadow") version "8.3.6"
 }
 
-group = "com.jagrosh"
+group = "com.lukas48452"
 version = "Snapshot"
 
 java {
@@ -28,11 +28,15 @@ dependencies {
     implementation("com.github.jagrosh:JLyrics:master-SNAPSHOT")
     implementation("com.google.code.gson:gson:2.11.0")
     implementation("com.dunctebot:sourcemanagers:1.9.0")
-    implementation("ch.qos.logback:logback-classic:1.2.13")
-    implementation("com.typesafe:config:1.3.2")
-    implementation("org.jsoup:jsoup:1.15.3")
-    testImplementation("junit:junit:4.13.1")
-    testImplementation("org.hamcrest:hamcrest-core:1.3")
+    implementation("redis.clients:jedis:5.2.0")
+    implementation("org.postgresql:postgresql:42.7.4")
+    implementation("com.zaxxer:HikariCP:6.0.0")
+    implementation("ch.qos.logback:logback-classic:1.5.16")
+    implementation("com.typesafe:config:1.4.3")
+    implementation("org.jsoup:jsoup:1.18.3")
+    testImplementation("org.junit.jupiter:junit-jupiter:5.11.4")
+    testImplementation("org.junit.platform:junit-platform-launcher:1.11.4")
+    testImplementation("org.hamcrest:hamcrest-core:3.0")
 }
 
 tasks.withType<JavaCompile> {
@@ -40,7 +44,7 @@ tasks.withType<JavaCompile> {
 }
 
 tasks.withType<Test> {
-    useJUnit()
+    useJUnitPlatform()
 }
 
 tasks {
@@ -49,7 +53,7 @@ tasks {
         mergeServiceFiles()
         manifest {
             attributes(
-                "Main-Class" to "com.jagrosh.jmusicbot.JMusicBot",
+                "Main-Class" to "com.jagrosh.jmusicbot.LMusicBot",
                 "Specification-Title" to project.name,
                 "Specification-Version" to project.version,
                 "Implementation-Title" to project.name,

@@ -43,9 +43,14 @@ public class RepeatSlashCmd extends SlashDJCommand
         RepeatMode newMode;
         switch (mode)
         {
-            case "all": newMode = RepeatMode.ALL; break;
-            case "single": newMode = RepeatMode.SINGLE; break;
-            default: newMode = RepeatMode.OFF;
+            case "all":
+                newMode = RepeatMode.ALL;
+                break;
+            case "single":
+                newMode = RepeatMode.SINGLE;
+                break;
+            default:
+                newMode = RepeatMode.OFF;
         }
         settings.setRepeatMode(newMode);
         event.reply(getClient().getSuccess() + " Repeat mode set to `" + newMode.getUserFriendlyName() + "`.").queue();

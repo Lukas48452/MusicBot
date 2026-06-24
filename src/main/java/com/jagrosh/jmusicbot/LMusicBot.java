@@ -26,9 +26,14 @@ import com.jagrosh.jmusicbot.commands.general.*;
 import com.jagrosh.jmusicbot.commands.music.*;
 import com.jagrosh.jmusicbot.commands.owner.*;
 import com.jagrosh.jmusicbot.commands.slash.*;
+import com.jagrosh.jmusicbot.audio.WebhookNotifier;
 import com.jagrosh.jmusicbot.entities.Prompt;
 import com.jagrosh.jmusicbot.gui.GUI;
+import com.jagrosh.jmusicbot.settings.FileStorage;
+import com.jagrosh.jmusicbot.settings.PostgresStorage;
+import com.jagrosh.jmusicbot.settings.RedisStorage;
 import com.jagrosh.jmusicbot.settings.SettingsManager;
+import com.jagrosh.jmusicbot.settings.StorageBackend;
 import com.jagrosh.jmusicbot.utils.OtherUtil;
 import java.awt.Color;
 import java.util.ArrayList;
@@ -48,9 +53,9 @@ import ch.qos.logback.classic.Level;
  *
  * @author John Grosh (jagrosh)
  */
-public class JMusicBot 
+public class LMusicBot 
 {
-    public final static Logger LOG = LoggerFactory.getLogger(JMusicBot.class);
+    public final static Logger LOG = LoggerFactory.getLogger(LMusicBot.class);
     public final static Permission[] RECOMMENDED_PERMS = {Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_HISTORY, Permission.MESSAGE_ADD_REACTION,
                                 Permission.MESSAGE_EMBED_LINKS, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_MANAGE, Permission.MESSAGE_EXT_EMOJI,
                                 Permission.VOICE_CONNECT, Permission.VOICE_SPEAK, Permission.NICKNAME_CHANGE};
@@ -75,7 +80,7 @@ public class JMusicBot
     private static void startBot()
     {
         // create prompt to handle startup
-        Prompt prompt = new Prompt("JMusicBot");
+        Prompt prompt = new Prompt("LMusicBot");
         
         // startup checks
         OtherUtil.checkVersion(prompt);
@@ -94,8 +99,12 @@ public class JMusicBot
         
         // set up the listener
         EventWaiter waiter = new EventWaiter();
-        SettingsManager settings = new SettingsManager();
+        StorageBackend storageBackend = createStorageBackend(config);
+        SettingsManager settings = new SettingsManager(storageBackend);
         Bot bot = new Bot(waiter, config, settings);
+        WebhookNotifier webhookNotifier = createWebhookNotifier(config, bot);
+        if (webhookNotifier != null)
+            bot.setWebhookNotifier(webhookNotifier);
         CommandClient client = createCommandClient(config, settings, bot);
         
         
@@ -135,7 +144,7 @@ public class JMusicBot
             String unsupportedReason = OtherUtil.getUnsupportedBotReason(jda);
             if (unsupportedReason != null)
             {
-                prompt.alert(Prompt.Level.ERROR, "JMusicBot", "JMusicBot cannot be run on this Discord bot: " + unsupportedReason);
+                prompt.alert(Prompt.Level.ERROR, "LMusicBot", "LMusicBot cannot be run on this Discord bot: " + unsupportedReason);
                 try{ Thread.sleep(5000);}catch(InterruptedException ignored){} // this is awful but until we have a better way...
                 jda.shutdown();
                 System.exit(1);
@@ -146,37 +155,73 @@ public class JMusicBot
             // message content intent
             if(!"@mention".equals(config.getPrefix()))
             {
-                LOG.info("JMusicBot", "You currently have a custom prefix set. "
+                LOG.info("LMusicBot", "You currently have a custom prefix set. "
                         + "If your prefix is not working, make sure that the 'MESSAGE CONTENT INTENT' is Enabled "
                         + "on https://discord.com/developers/applications/" + jda.getSelfUser().getId() + "/bot");
             }
         }
         catch (LoginException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", ex + "\nPlease make sure you are "
+            prompt.alert(Prompt.Level.ERROR, "LMusicBot", ex + "\nPlease make sure you are "
                     + "editing the correct config.yaml file, and that you have used the "
                     + "correct token (not the 'secret'!)\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         }
         catch(IllegalArgumentException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", "Some aspect of the configuration is "
+            prompt.alert(Prompt.Level.ERROR, "LMusicBot", "Some aspect of the configuration is "
                     + "invalid: " + ex + "\nConfig Location: " + config.getConfigLocation());
             System.exit(1);
         }
         catch(ErrorResponseException ex)
         {
-            prompt.alert(Prompt.Level.ERROR, "JMusicBot", ex + "\nInvalid reponse returned when "
+            prompt.alert(Prompt.Level.ERROR, "LMusicBot", ex + "\nInvalid reponse returned when "
                     + "attempting to connect, please make sure you're connected to the internet");
             System.exit(1);
         }
     }
-    
+
+    private static StorageBackend createStorageBackend(BotConfig config)
+    {
+        String type = config.getStorageType();
+        if (type == null || type.equalsIgnoreCase("file"))
+        {
+            LOG.info("Using file-based settings storage");
+            return new FileStorage();
+        }
+        else if (type.equalsIgnoreCase("redis"))
+        {
+            LOG.info("Using Redis settings storage at {}:{}", config.getRedisHost(), config.getRedisPort());
+            return new RedisStorage(config.getRedisHost(), config.getRedisPort(), config.getRedisPassword());
+        }
+        else if (type.equalsIgnoreCase("postgres"))
+        {
+            LOG.info("Using PostgreSQL settings storage at {}:{}/{}",
+                    config.getPostgresHost(), config.getPostgresPort(), config.getPostgresDatabase());
+            return new PostgresStorage(config.getPostgresHost(), config.getPostgresPort(),
+                    config.getPostgresDatabase(), config.getPostgresUser(), config.getPostgresPassword());
+        }
+        else
+        {
+            LOG.warn("Unknown storage type '{}', falling back to file storage", type);
+            return new FileStorage();
+        }
+    }
+
+    private static WebhookNotifier createWebhookNotifier(BotConfig config, Bot bot)
+    {
+        String url = config.getWebhookUrl();
+        if (url == null || url.isEmpty())
+            return null;
+        LOG.info("Webhook notifications enabled");
+        return new WebhookNotifier(bot, url, config.getWebhookUpdateTime());
+    }
+
     private static CommandClient createCommandClient(BotConfig config, SettingsManager settings, Bot bot)
     {
         // instantiate about command
         AboutCommand aboutCommand = new AboutCommand(Color.BLUE.brighter(),
-                                "a music bot that is [easy to host yourself!](https://github.com/jagrosh/MusicBot) (v" + OtherUtil.getCurrentVersion() + ")",
+                                "a modern Discord music bot with [slash commands and Spotify support](https://github.com/Lukas48452/MusicBot) (v" + OtherUtil.getCurrentVersion() + ")",
                                 new String[]{"High-quality music playback", "FairQueue™ Technology", "Easy to host yourself"},
                                 RECOMMENDED_PERMS);
         aboutCommand.setIsAuthor(false);

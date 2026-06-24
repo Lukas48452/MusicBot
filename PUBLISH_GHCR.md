@@ -24,7 +24,7 @@ The workflow will:
 2. Publish it as a release artifact
 3. Build the Docker image from `Dockerfile`
 4. Push two tags to GHCR:
-   - `ghcr.io/<owner>/<repo>:<version>` — e.g. `ghcr.io/jagrosh/musicbot:0.4.1`
+   - `ghcr.io/<owner>/<repo>:<version>` — e.g. `ghcr.io/lukas48452/musicbot:0.4.1`
    - `ghcr.io/<owner>/<repo>:latest`
 
 ## Pulling the Image
@@ -39,10 +39,10 @@ Replace `<owner>/<repo>` with your GitHub username/org and repository name.
 
 ```sh
 # Pull the latest release
-docker pull ghcr.io/jagrosh/musicbot:latest
+docker pull ghcr.io/lukas48452/musicbot:latest
 
 # Run with a config volume
-docker run -v ./config:/app/config ghcr.io/jagrosh/musicbot:latest
+docker run -v ./config:/app/config ghcr.io/lukas48452/musicbot:latest
 ```
 
 ## Local Testing

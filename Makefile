@@ -33,7 +33,7 @@ logs:
 restart: build run
 
 shell:
-	docker compose -f $(COMPOSE_FILE) exec jmusicbot sh
+	docker compose -f $(COMPOSE_FILE) exec lmusicbot sh
 
 test:
 	./gradlew test

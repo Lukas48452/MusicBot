@@ -12,15 +12,15 @@ RUN gradle --no-daemon shadowJar
 FROM eclipse-temurin:${JAVA_VERSION}-jre
 WORKDIR /app
 
-RUN groupadd -r jmusicbot && \
-    useradd -r -g jmusicbot -d /app -s /sbin/nologin jmusicbot && \
+RUN groupadd -r lmusicbot && \
+    useradd -r -g lmusicbot -d /app -s /sbin/nologin lmusicbot && \
     mkdir -p /app/config && \
-    chown -R jmusicbot:jmusicbot /app
+    chown -R lmusicbot:lmusicbot /app
 
-COPY --from=build --chown=jmusicbot:jmusicbot /build/build/libs/*-All.jar app.jar
+COPY --from=build --chown=lmusicbot:lmusicbot /build/build/libs/*-All.jar app.jar
 
 VOLUME ["/app/config"]
-USER jmusicbot
+USER lmusicbot
 
 ENV JAVA_TOOL_OPTIONS="-Xms128m -Xmx512m -XX:+ExitOnOutOfMemoryError -Djava.awt.headless=true"
 
@@ -28,6 +28,6 @@ STOPSIGNAL SIGTERM
 
 ENTRYPOINT ["java", "-jar", "app.jar", "--nogui"]
 
-LABEL org.opencontainers.image.title="JMusicBot" \
-      org.opencontainers.image.description="A Discord music bot" \
-      org.opencontainers.image.source="https://github.com/jagrosh/MusicBot"
+LABEL org.opencontainers.image.title="LMusicBot" \
+       org.opencontainers.image.description="A modern Discord music bot with slash commands, Spotify, and Docker support" \
+       org.opencontainers.image.source="https://github.com/Lukas48452/MusicBot"

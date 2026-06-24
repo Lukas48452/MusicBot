@@ -1,1 +1,1 @@
-rootProject.name = "JMusicBot"
+rootProject.name = "LMusicBot"
